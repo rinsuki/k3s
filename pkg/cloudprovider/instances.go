@@ -43,6 +43,7 @@ func (k *k3s) InstanceMetadata(ctx context.Context, node *v1.Node) (*cloudprovid
 
 	// check internal address
 	if address := node.Annotations[InternalIPKey]; address != "" {
+		logrus.Errorf("NodeIP Addresses from InternalIPKey: %+v", addresses)
 		for _, v := range strings.Split(address, ",") {
 			addresses = append(addresses, corev1.NodeAddress{Type: corev1.NodeInternalIP, Address: v})
 		}
@@ -69,6 +70,8 @@ func (k *k3s) InstanceMetadata(ctx context.Context, node *v1.Node) (*cloudprovid
 	} else {
 		logrus.Infof("Couldn't find node hostname annotation or label on node %s", node.Name)
 	}
+
+	logrus.Errorf("addresses: %+v", addresses)
 
 	return &cloudprovider.InstanceMetadata{
 		ProviderID:    fmt.Sprintf("%s://%s", version.Program, node.Name),
